@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎁 Gift Snipe - Ultimate Aim Training Game</title>
+    <meta name="description" content="Master your aim with Gift Snipe - the ultimate aim training minigame featuring multiple difficulty levels, game modes, and real-time GPS tracking.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <header class="game-header">
+            <h1 class="game-title">🎁 Gift Snipe</h1>
+            <p class="game-subtitle">Ultimate aim training minigame</p>
+        </header>
+
+        <div class="game-layout">
+            <!-- Control Panel -->
+            <div class="sidebar">
+                <!-- Stats Card -->
+                <div class="stats-card">
+                    <h3 class="card-title">📊 Game Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Score</span>
+                            <span class="stat-value" id="score">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Gifts</span>
+                            <span class="stat-value" id="gifts">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Time</span>
+                            <span class="stat-value" id="time">00:00</span>
+                        </div>
+                        <div class="gps-section">
+                            <h4 class="gps-title">GPS Tracking</h4>
+                            <div class="gps-stats">
+                                <div class="gps-item">
+                                    <span class="gps-label">Current</span>
+                                    <span class="gps-value" id="current-gps">0/s</span>
+                                </div>
+                                <div class="gps-item">
+                                    <span class="gps-label">Average</span>
+                                    <span class="gps-value" id="average-gps">0/s</span>
+                                </div>
+                                <div class="gps-item">
+                                    <span class="gps-label">Peak</span>
+                                    <span class="gps-value" id="peak-gps">0/s</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Control Card -->
+                <div class="control-card">
+                    <h3 class="card-title">🎮 Game Control</h3>
+                    <button id="start-btn" class="start-btn">🚀 Start Game</button>
+                    <button id="stop-btn" class="stop-btn" style="display: none;">⏹️ Stop Game</button>
+                </div>
+
+                <!-- Settings Card -->
+                <div class="settings-card">
+                    <h3 class="card-title">⚙️ Settings</h3>
+                    
+                    <!-- Game Mode -->
+                    <div class="setting-group">
+                        <label class="setting-label">Game Mode</label>
+                        <div class="mode-buttons">
+                            <button class="mode-btn active" data-mode="click">
+                                <span class="mode-icon">👆</span>
+                                <div>
+                                    <div class="mode-name">Click</div>
+                                    <div class="mode-desc">Click gifts to collect</div>
+                                </div>
+                            </button>
+                            <button class="mode-btn" data-mode="hover">
+                                <span class="mode-icon">👉</span>
+                                <div>
+                                    <div class="mode-name">Hover</div>
+                                    <div class="mode-desc">Hover over gifts to collect</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Difficulty -->
+                    <div class="setting-group">
+                        <label class="setting-label">Difficulty</label>
+                        <div class="difficulty-buttons">
+                            <button class="difficulty-btn" data-difficulty="easy">
+                                <div class="difficulty-name">Easy</div>
+                                <div class="difficulty-desc">Slow spawn, no despawn</div>
+                                <span class="difficulty-badge easy">easy</span>
+                            </button>
+                            <button class="difficulty-btn active" data-difficulty="medium">
+                                <div class="difficulty-name">Medium</div>
+                                <div class="difficulty-desc">Normal spawn, no despawn</div>
+                                <span class="difficulty-badge medium">medium</span>
+                            </button>
+                            <button class="difficulty-btn" data-difficulty="hard">
+                                <div class="difficulty-name">Hard</div>
+                                <div class="difficulty-desc">Fast spawn, 4s despawn</div>
+                                <span class="difficulty-badge hard">hard</span>
+                            </button>
+                            <button class="difficulty-btn" data-difficulty="impossible">
+                                <div class="difficulty-name">Impossible</div>
+                                <div class="difficulty-desc">Very fast, 2s despawn</div>
+                                <span class="difficulty-badge impossible">impossible</span>
+                            </button>
+                            <button class="difficulty-btn" data-difficulty="custom">
+                                <div class="difficulty-name">🛠️ Custom</div>
+                                <div class="difficulty-desc">Unlimited customization</div>
+                                <span class="difficulty-badge custom">custom</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Gift Size -->
+                    <div class="setting-group">
+                        <label class="setting-label">Gift Size: <span id="size-value">50</span>px</label>
+                        <input type="range" id="size-slider" min="15" max="120" value="50" step="5" class="size-slider">
+                        <div class="size-preview">
+                            <div class="preview-gift" id="preview-gift">🎁</div>
+                        </div>
+                    </div>
+
+                <!-- Custom Settings (Hidden by default) -->
+                <div id="custom-settings" style="display: none;">
+                    <div class="setting-group">
+                        <label class="setting-label">⚡ Spawn Rate: <span id="spawn-rate-value">1000</span>ms</label>
+                        <input type="range" id="spawn-rate-slider" class="size-slider" min="50" max="5000" value="1000" step="25">
+                        <div class="setting-desc">Lower = faster spawning (50ms = insane, 5000ms = very slow)</div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">
+                            <input type="checkbox" id="despawn-toggle" checked> 
+                            💀 Auto Despawn: <span id="despawn-rate-value">3000</span>ms
+                        </label>
+                        <input type="range" id="despawn-rate-slider" class="size-slider" min="200" max="20000" value="3000" step="100">
+                        <div class="setting-desc">Time before gifts disappear (200ms = ultra fast, 20s = very slow)</div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">🎭 Custom Emojis</label>
+                        <input type="text" id="emoji-input" placeholder="🎁🎀📦🎊✨🎂🍰🧁🍭🍬" value="🎁🎀📦🎊✨" class="emoji-input">
+                        <div class="setting-desc">Paste ANY emojis! Try: 🚀🌟⭐💎🔥❤️🎯🏆👑💫</div>
+                        <button id="random-emojis-btn" class="random-btn">🎲 Random Mix</button>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">📏 Advanced Size Control</label>
+                        <div class="size-controls">
+                            <div class="size-row">
+                                <span class="size-label">Min Size: <span id="min-size-value">30</span>px</span>
+                                <input type="range" id="min-size-slider" class="size-slider" min="10" max="80" value="30" step="2">
+                            </div>
+                            <div class="size-row">
+                                <span class="size-label">Max Size: <span id="max-size-value">80</span>px</span>
+                                <input type="range" id="max-size-slider" class="size-slider" min="20" max="150" value="80" step="2">
+                            </div>
+                            <label class="toggle-item">
+                                <input type="checkbox" id="random-sizes-toggle">
+                                <span>Random Sizes</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">🎨 Visual Effects</label>
+                        <div class="toggle-grid">
+                            <label class="toggle-item">
+                                <input type="checkbox" id="hover-animations-toggle" checked>
+                                <span>Hover Effects</span>
+                            </label>
+                            <label class="toggle-item">
+                                <input type="checkbox" id="click-animations-toggle" checked>
+                                <span>Click Effects</span>
+                            </label>
+                            <label class="toggle-item">
+                                <input type="checkbox" id="spawn-animations-toggle" checked>
+                                <span>Spawn Animations</span>
+                            </label>
+                            <label class="toggle-item">
+                                <input type="checkbox" id="collect-animations-toggle" checked>
+                                <span>Collect Animations</span>
+                            </label>
+                            <label class="toggle-item">
+                                <input type="checkbox" id="particle-effects-toggle" checked>
+                                <span>Particle Effects</span>
+                            </label>
+                            <label class="toggle-item">
+                                <input type="checkbox" id="background-effects-toggle" checked>
+                                <span>Background Effects</span>
+                            </label>
+                            <label class="toggle-item">
+                                <input type="checkbox" id="neon-glow-toggle" checked>
+                                <span>Neon Glow</span>
+                            </label>
+                            <label class="toggle-item">
+                                <input type="checkbox" id="rainbow-mode-toggle">
+                                <span>🌈 Rainbow Mode</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">⚡ Game Physics</label>
+                        <div class="physics-controls">
+                            <div class="physics-row">
+                                <span class="physics-label">Gravity: <span id="gravity-value">0</span></span>
+                                <input type="range" id="gravity-slider" class="size-slider" min="0" max="5" value="0" step="0.1">
+                            </div>
+                            <div class="physics-row">
+                                <span class="physics-label">Bounce: <span id="bounce-value">0</span></span>
+                                <input type="range" id="bounce-slider" class="size-slider" min="0" max="1" value="0" step="0.1">
+                            </div>
+                            <label class="toggle-item">
+                                <input type="checkbox" id="floating-toggle">
+                                <span>🎈 Floating Gifts</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">🎯 Gameplay Modifiers</label>
+                        <div class="toggle-grid">
+                            <label class="toggle-item">
+                                <input type="checkbox" id="multi-collect-toggle">
+                                <span>Multi-Collect</span>
+                            </label>
+                            <label class="toggle-item">
+                                <input type="checkbox" id="combo-mode-toggle">
+                                <span>Combo Mode</span>
+                            </label>
+                            <label class="toggle-item">
+                                <input type="checkbox" id="inverted-controls-toggle">
+                                <span>Inverted Controls</span>
+                            </label>
+                            <label class="toggle-item">
+                                <input type="checkbox" id="stealth-mode-toggle">
+                                <span>👻 Stealth Mode</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label class="setting-label">🔄 Auto Settings</label>
+                        <button id="preset-chaos-btn" class="preset-btn chaos">🌪️ Chaos Mode</button>
+                        <button id="preset-zen-btn" class="preset-btn zen">🧘 Zen Mode</button>
+                        <button id="preset-speed-btn" class="preset-btn speed">⚡ Speed Demon</button>
+                        <button id="preset-random-btn" class="preset-btn random">🎲 Randomize All</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- Game Area -->
+            <div class="game-area-container">
+                <div id="game-area" class="game-area">
+                    <div class="start-screen" id="start-screen">
+                        <div class="start-content">
+                            <div class="start-emoji">🎁</div>
+                            <h3 class="start-title">Ready to start?</h3>
+                            <p class="start-desc">Configure your settings and hit Start Game!</p>
+                        </div>
+                    </div>
+                    <div class="waiting-screen" id="waiting-screen" style="display: none;">
+                        <div class="waiting-message">Waiting for gifts...</div>
+                    </div>
+                </div>
+                
+                <div class="game-info">
+                    <div class="info-badge">
+                        <div class="info-item">
+                            <div class="status-dot active"></div>
+                            <span>Mode: <span id="current-mode">click</span></span>
+                        </div>
+                        <div class="info-divider"></div>
+                        <div class="info-item">
+                            <div class="status-dot secondary"></div>
+                            <span>Difficulty: <span id="current-difficulty">medium</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="toast-content">
+            <div class="toast-title" id="toast-title"></div>
+            <div class="toast-message" id="toast-message"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
